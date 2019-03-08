@@ -1,0 +1,293 @@
+#include<iostream>
+#include<string.h>
+#include<stdio.h>
+#include<fstream>
+#include<sstream>
+
+using namespace std;
+
+int kmpalgoreal(const char *intext, const char *patnn, int p)
+{
+	int ip, tj, *ncheck;
+	int result = -1;
+	int M, N;
+	M = strlen(intext);
+	N = strlen(patnn);
+	int comparisons = 0;
+	ncheck = (int*)malloc((strlen(patnn) + 1) * sizeof(int));
+	ncheck[0] = -1;
+	for (ip = 0; patnn[ip] != NULL; ip++)
+	{
+		ncheck[ip + 1] = ncheck[ip] + 1;
+		int tp = ip + 1;
+		while (patnn[ip] != patnn[ncheck[tp] - 1] && ncheck[tp] > 0)
+		{
+			int n1check = ncheck[ncheck[tp] - 1];
+			ncheck[tp] = n1check + 1;
+		}
+	}
+	for (ip = tj = 0; intext[ip] != NULL; )
+	{
+		if (intext[ip] == patnn[tj] || tj < 0)
+		{
+			tj++;
+			ip++;
+			comparisons++;
+			if (patnn[tj] == NULL)
+			{
+				if (p == 1) {
+					cout << "Matched string found starting at text position " << " " << ip - tj + 1 << endl;
+					cout << "Matched String" << " " << patnn << endl;
+					cout << "Total number of character comparisons " << " " << comparisons << endl;
+					return 0;
+				}
+				else if (p == 0) {
+					return ip - tj + 1;
+				}
+				
+			}
+		}
+	else tj = ncheck[tj];
+	}
+	return result;
+}
+
+int main()
+{
+
+	char s1[10];
+	char s2[10];
+	char s3[10];
+	ifstream in("data1.txt");
+	string T, s, s11, s22, s33;
+	getline(in, s11);
+	getline(in, s22);
+	getline(in, s33);
+	cout << "s1 = " << s11 << endl;
+	cout << "s2 = " << s22 << endl;
+	cout << "s3 = " << s33 << endl;
+	while (!in.eof())
+	{
+		getline(in, s);
+		//cout << s;
+		T.append(s);
+	}
+	cout <<"TEXT="<<"  "<< T << endl;
+	in.close();
+	string patk, patk1, patk2, patf1, patf2, patnul, patk3, patk4, patk5, patk6, patk7, patk8, patk9, pat, skk;
+	stringstream ssp;
+	string temp;
+	ssp << s22;
+	int found;
+
+
+	patnul = (s11 + s33);
+	pat = (s11 + s22 + s33);
+	patk1 = (s11 + s22 + s22 + s33);
+	patk2 = (s11 + s22 + s22 + s22 + s33);
+	patk3 = (s11 + s22 + s22 + s22 + s22 + s33);
+	patk4 = (s11 + s22 + s22 + s22 + s22 + s22 + s33);
+	patk5 = (s11 + s22 + s22 + s22 + s22 + s22 + s22 + s33);
+	patk6 = (s11 + s22 + s22 + s22 + s22 + s22 + s22 + s22 + s33);
+	patk7 = (s11 + s22 + s22 + s22 + s22 + s22 + s22 + s22 + s22 + s33);
+	patk8 = (s11 + s22 + s22 + s22 + s22 + s22 + s22 + s22 + s22 + s22 + s33);
+	patk9 = (s11 + s22 + s22 + s22 + s22 + s22 + s22 + s22 + s22 + s22 + s22 + s33);
+
+
+	char *patnul1 = const_cast<char*>(patnul.c_str());
+	char *pat1 = const_cast<char*>(pat.c_str());
+	char *pat2 = const_cast<char*>(patk1.c_str());
+	char *pat3 = const_cast<char*>(patk2.c_str());
+	char *pat4 = const_cast<char*>(patk3.c_str());
+	char *pat5 = const_cast<char*>(patk4.c_str());
+	char *pat6 = const_cast<char*>(patk5.c_str());
+	char *pat7 = const_cast<char*>(patk6.c_str());
+	char *pat8 = const_cast<char*>(patk7.c_str());
+	char *pat9 = const_cast<char*>(patk8.c_str());
+	char *pat10 = const_cast<char*>(patk9.c_str());
+	char *text = const_cast<char*>(T.c_str());
+
+	int result = -1;
+	int mim = -1;
+	int mimCase = -1;
+
+	result = kmpalgoreal(text, patnul1,0);
+	if (result != -1) {
+		if (mim == -1) {
+			mim = result;
+			mimCase = 0;
+		}
+		else if(result < mim){
+			mimCase = 0;
+			mim = result;
+		}
+	}
+	result = kmpalgoreal(text, pat1,0);
+	if (result != -1) {
+		if (mim == -1) {
+			mimCase = 1;
+			mim = result;
+		}
+		else if 
+			(result < mim) {
+			mim = result;
+			mimCase = 1;
+		}
+	}
+	result = kmpalgoreal(text, pat2,0);
+	if (result != -1) {
+		if (mim == -1) {
+			mimCase = 2;
+			mim = result;
+		}
+		else if (result < mim) {
+			mim = result;
+			mimCase = 2;
+		}
+	}
+	result = kmpalgoreal(text, pat3,0);
+	if (result != -1) {
+		if (mim == -1) {
+			mim = result;
+			mimCase = 3;
+		}
+		else if (result < mim) {
+			mim = result;
+			mimCase = 3;
+		}
+	}
+	result = kmpalgoreal(text, pat4,0);
+	if (result != -1) {
+		if (mim == -1) {
+			mim = result;
+			mimCase = 4;
+		}
+		else if (result < mim) {
+			mim = result;
+			mimCase = 4;
+		}
+	}
+	result = kmpalgoreal(text, pat5,0);
+	if (result != -1) {
+		if (mim == -1) {
+			mim = result;
+			mimCase = 5;
+		}
+		else if (result < mim) {
+			mim = result;
+			mimCase = 5;
+		}
+	}
+	result = kmpalgoreal(text, pat6,0);
+	if (result != -1) {
+		if (mim == -1) {
+			mim = result;
+			mimCase = 6;
+		}
+		else if (result < mim) {
+			mim = result;
+			mimCase = 6;
+		}
+	}
+	result = kmpalgoreal(text, pat7,0);
+	if (result != -1) {
+		if (mim == -1) {
+			mim = result;
+			mimCase = 7;
+		}
+		else if (result < mim) {
+			mim = result;
+			mimCase = 7;
+		}
+	}
+	result = kmpalgoreal(text, pat8,0);
+	if (result != -1) {
+		if (mim == -1) {
+			mim = result;
+			mimCase = 8;
+		}
+		else if (result < mim) {
+			mim = result;
+			mimCase = 8;
+		}
+	}
+	result = kmpalgoreal(text, pat9,0);
+	if (result != -1) {
+		if (mim == -1) {
+			mim = result;
+			mimCase = 9;
+		}
+		else if (result < mim) {
+			mim = result;
+			mimCase = 9;
+		}
+	}
+	result = kmpalgoreal(text, pat10,0);
+	if (result != -1) {
+		if (mim == -1) {
+			mim = result;
+			mimCase = 10;
+		}
+		else if (result < mim) {
+			mim = result;
+			mimCase = 10;
+		}
+	}
+	result = -1;
+	
+		if (mimCase == 0)
+		{
+			result = kmpalgoreal(text, patnul1,1);
+		}
+		else if (mimCase == 1)
+		{
+			result = kmpalgoreal(text, pat1, 1);
+		}
+		else if (mimCase == 2)
+		{
+			result = kmpalgoreal(text, pat2, 1);
+
+		}
+		else if (mimCase == 3)
+		{
+			result = kmpalgoreal(text, pat3, 1);
+
+		}
+		else if (mimCase == 4)
+		{
+
+			result = kmpalgoreal(text, pat4, 1);
+		}
+		else if (mimCase == 5)
+		{
+			result = kmpalgoreal(text, pat5, 1);
+		}
+		else if (mimCase == 6)
+		{
+			result = kmpalgoreal(text, pat6, 1);
+		}
+		else if (mimCase == 7)
+		{
+			result = kmpalgoreal(text, pat7, 1);
+		}
+		else if (mimCase == 8)
+		{
+			result = kmpalgoreal(text, pat8, 1);
+		}
+		else if (mimCase == 9)
+		{
+			result = kmpalgoreal(text, pat9, 1);
+		}
+		else if (mimCase == 10)
+		{
+			result = kmpalgoreal(text, pat10, 1);
+		}
+
+		else
+			cout << "no match" << endl;
+      	getchar();
+		getchar();
+		cin.get();
+		return 0;
+
+}
