@@ -1,0 +1,202 @@
+
+#include <iostream>
+#include <vector>
+#include <list>
+#include <fstream>
+using namespace std;
+
+class e_node { //stands for edge node
+public:
+	int nb;//the neighbor of a currently considered node
+	int weight; //weight of the edge to the above neighbor
+	e_node() {}//constructor
+};
+class rt_node { //rt stands for routing table
+public:
+	int cost;  //cost to a node
+	int from;  //the from node to this node
+	int checked;
+	int h_pos; //the postion in heap for this node
+	rt_node() { from = -1;  cost = 9999;  checked = 0; }
+};
+
+class h_node { //stands for heap_node
+public:
+	int id;
+	int cost;
+	h_node() { id = -1; cost = 9999; }
+	h_node(int i, int j) { id = i; cost = j; }
+	bool operator<(h_node h) { return (cost < h.cost); }
+};
+void set_up(vector<rt_node> &rt, vector<h_node> & heap, int &start);
+void select_node(vector<list<e_node>> & graph, vector<rt_node> & rt, vector<h_node> &heap);
+void neighbor_updatea(vector<rt_node> & rt, vector<h_node> & heap, int &s);
+void neighbor_updateb(vector<rt_node> & rt, vector<h_node> & heap);
+int main() {
+	//Do not change code for main function
+	ifstream in("TextFile1.txt");
+	int start;
+	in >> start;  //start is the source node for the algorithm
+	int n, e; //n: num of nodes ; e: num of edges
+	in >> n >> e;
+	list<e_node> le;
+	vector<list<e_node> > graph(n, le);//////////////////////////////note ///////////////////////////////
+	e_node e1;
+	int n1, n2, w;
+	for (int i = 0; i < e; i++) {
+		in >> n1 >> n2 >> w;
+		e1.nb = n2;
+		e1.weight = w;
+		graph[n1].push_back(e1);
+	}
+	in.close();
+	vector<rt_node> rt(n); //rt stands for routing table
+	vector<h_node> heap(n);
+	set_up(rt, heap, start);//initialize values
+	select_node(graph, rt, heap);
+
+	for (int i = 0; i < n; i++) {
+
+		cout << "cost from " << start << " to " << i << " is: " << rt[i].cost << "  from node is " << rt[i].from << endl;
+	}
+	getchar();
+	getchar();
+	return 0;
+}
+void set_up(vector<rt_node> &rt, vector<h_node> & heap, int &start)
+{
+	int h1;
+	rt[start].from = start;
+	rt[start].cost = 0;
+	for (h1 = 0; h1 < heap.size(); h1++)
+	{
+		heap[h1].id = h1;
+		rt[h1].h_pos = h1;
+	}
+	rt[0].h_pos = start;
+	rt[start].h_pos = 0;
+	heap[0].id = start;
+	heap[start].id = 0;
+	heap[0].cost = 0;
+}
+void changecost(h_node *h2, h_node *h3)
+{
+	int svar = 0;
+	svar = h2->cost;
+	h2->cost = h3->cost;
+	h3->cost = svar;
+}
+void changeid(h_node *h2, h_node *h3)
+{
+	int varid = 0;
+	varid = h2->id;
+	h2->id = h3->id;
+	h3->id = varid;
+}
+
+int parentl(int nump)
+{
+	return (nump - 2) / 2;
+}
+
+int parentr(int numpr)
+{
+	return (numpr - 1) / 2;
+}
+
+int lchild(int numcl)
+{
+	return (2 * numcl) + 1;
+
+
+}
+
+int rchild(int numcr)
+{
+	return  (2 * numcr) + 2;
+
+}
+int  heapn(int numh)
+{
+	return numh % 2;
+}
+void neighbor_updatea(vector<rt_node> & rt, vector<h_node> & heap, int &s)
+{
+	for (int h1 = s; h1 > 0; h1--)
+	{
+		switch (heapn(s) == 0)
+		{
+			while (heap[parentl(h1)].cost > heap[h1].cost) {
+				changecost(&heap[parentl(h1)], &(heap[h1]));
+				changeid(&heap[parentl(h1)], &(heap[h1]));
+			}
+		default:
+			while (heap[parentr(h1)].cost > heap[h1].cost) {
+				changecost(&heap[parentr(h1)], &(heap[h1]));
+				changeid(&heap[parentr(h1)], &(heap[h1]));
+				break;
+			}
+
+		}
+
+	}
+}
+void neighbor_updateb(vector<rt_node> & rt, vector<h_node> & heap)
+{
+	for (int h1 = 0; heap.size() >lchild(h1); h1++)
+	{
+		int hs = heap.size();
+		while (rchild(h1) == hs)
+		{
+			if (heap[lchild(h1)].cost <heap[h1].cost)
+			{
+				changecost(&heap[lchild(h1)], &(heap[h1]));
+				changeid(&heap[lchild(h1)], &(heap[h1]));
+			}
+			else
+				break;
+		}
+		while (rchild(h1)> hs && ((heap[rchild(h1)].cost<heap[h1].cost) || (heap[rchild(h1)].cost <heap[h1].cost)))
+		{
+			changecost(&heap[rchild(h1)], &(heap[h1]));
+			changeid(&heap[rchild(h1)], &(heap[h1]));
+			changecost(&heap[rchild(h1)], &(heap[h1]));
+			changeid(&heap[rchild(h1)], &(heap[h1]));
+		}
+	}
+}
+void tableupdate(e_node &tmp1, h_node &k3, vector<rt_node> & rt1, int num1, int numid)
+{
+	k3.cost = num1 + tmp1.weight;
+	int p2 = tmp1.nb;
+	rt1[p2].from = numid;
+	rt1[p2].cost = num1 + tmp1.weight;
+}
+void select_node(vector<list<e_node>> & graph, vector<rt_node> & rt, vector<h_node> &heap)
+{
+	while (heap.size()>0)
+	{
+		int var2id = 0; int var2cost = 0; int s2 = heap.size();
+		var2cost = heap[0].cost;
+		var2id = heap[0].id;
+		heap[0].cost = heap[s2 - 1].cost;
+		heap[0].id = heap[s2 - 1].id;
+		heap.resize(s2 - 1);
+		rt[var2id].checked = 1;
+		neighbor_updateb(rt, heap);
+		for (int h1 = 0; h1 < graph[var2id].size(); h1++)
+		{
+			std::list<e_node>::iterator it = graph[var2id].begin();
+			std::advance(it, h1);
+			e_node tmp = *it;
+			for (int k1 = 0; heap.size() >k1; k1++)
+			{
+				while (tmp.nb == heap[k1].id&& tmp.nb != 0 && tmp.weight + var2cost<heap[k1].cost)
+				{
+					tableupdate(tmp, heap[k1], rt, var2cost, var2id);
+					neighbor_updatea(rt, heap, k1);
+				}
+			}
+		}
+	}
+}
